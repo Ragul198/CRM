@@ -61,7 +61,13 @@ exports.logout = async (req,res) => {
     // }
   }
 
-  res.cookie('token','none',{ expires:new Date(Date.now()+10*1000),httpOnly:true });
+  res.cookie("token", "", {
+  httpOnly: true,
+  secure: true,
+  sameSite: "none",
+  expires: new Date(0),
+});
+
   res.status(200).json({ success: true, message:'Logged out Successfully' });
 };
 
@@ -85,7 +91,8 @@ exports.forgotPassword = async(req,res) => {
             return res.status(400).json({success: false,message: "Email doesn't exists"})
         }
         const token = jwt.sign({id: isEmail.id},process.env.JWT_SECRET)
-        const resetURL = `http://localhost:5173/reset-password/${isEmail._id}/${token}`;
+        const resetURL = `${process.env.FRONTEND_URL}/reset-password/${isEmail._id}/${token}`;
+
 
         res.status(200).json({success: true,message: `Go to check your email : ${isEmail.name}`,data: {email: isEmail}})
 
